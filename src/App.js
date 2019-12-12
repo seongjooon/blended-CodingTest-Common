@@ -1,6 +1,4 @@
 module.exports = function update(prevState, changes) {
-  const result = getChangesState(changes);
-
   if (Array.isArray(prevState)) {
     for (const prop in changes) {
       if (prop === '$push') {
@@ -10,6 +8,22 @@ module.exports = function update(prevState, changes) {
         prevState.unshift(changes[prop][0]);
         return prevState;
       }
+    }
+  }
+
+  const result = getChangesState(changes);
+
+  function getChangesState(changesState, ...keys) {
+    for (const prop in changesState) {
+      if (typeof changesState[prop] === 'object') {
+        if (prop === '$set') {
+          return changesState[prop];
+        } else if (prop === '$merge') {
+          return { ...prevState, ...changesState[prop] };
+        }
+        return getChangesState(changesState[prop], ...keys.concat(prop));
+      }
+      return setNextState(keys, changesState[prop]);
     }
   }
 
@@ -23,18 +37,6 @@ module.exports = function update(prevState, changes) {
 
     obj[temp] = changesValue;
     return setNextState(keys, obj);
-  }
-
-  function getChangesState(changesState, ...keys) {
-    for (const prop in changesState) {
-      if (typeof changesState[prop] === 'object') {
-        if (prop === '$set') {
-          return changesState[prop];
-        }
-        return getChangesState(changesState[prop], ...keys.concat(prop));
-      }
-      return setNextState(keys, changesState[prop]);
-    }
   }
 
   return result;
