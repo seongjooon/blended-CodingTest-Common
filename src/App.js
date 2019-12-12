@@ -3,29 +3,20 @@ module.exports = function update(prevState, changes) {
     return prevState;
   }
 
-  if (Array.isArray(prevState)) {
-    for (const prop in changes) {
-      if (prop === '$push') {
-        for (let i = 0; i < changes[prop].length; i++) {
+  for (const prop in changes) {
+    if (Array.isArray(prevState)) {
+      for (let i = 0; i < changes[prop].length; i++) {
+        if (prop === '$push') {
           prevState.push(changes[prop][i]);
-        }
-
-        return prevState;
-      } else if (prop === '$unshift') {
-        for (let i = 0; i < changes[prop].length; i++) {
+        } else if (prop === '$unshift') {
           prevState.unshift(changes[prop][i]);
+        } else if (prop === '$splice') {
+          const [temp] = changes[prop];
+          prevState.splice(...temp);
         }
-
-        return prevState;
-      } else if (prop === '$splice') {
-        const [temp] = changes[prop];
-        prevState.splice(...temp);
-
-        return prevState;
       }
-    }
-  } else if (typeof prevState === 'number') {
-    for (const prop in changes) {
+      return prevState;
+    } else if (typeof prevState === 'number') {
       if (prop === '$apply') {
         return changes[prop](prevState);
       }
