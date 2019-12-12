@@ -9,6 +9,12 @@ module.exports = function update(prevState, changes) {
         return prevState;
       }
     }
+  } else if (typeof prevState === 'number') {
+    for (const prop in changes) {
+      if (prop === '$apply') {
+        return changes[prop](prevState);
+      }
+    }
   }
 
   const result = getChangesState(changes);
