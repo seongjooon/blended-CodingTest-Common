@@ -1,12 +1,20 @@
 module.exports = function update(prevState, changes) {
+  if (typeof changes === 'undefined') {
+    return prevState;
+  }
+
   if (Array.isArray(prevState)) {
     for (const prop in changes) {
       if (prop === '$push') {
-        prevState.push(changes[prop][0]);
+        for (let i = 0; i < changes[prop].length; i++) {
+          prevState.push(changes[prop][i]);
+        }
 
         return prevState;
       } else if (prop === '$unshift') {
-        prevState.unshift(changes[prop][0]);
+        for (let i = 0; i < changes[prop].length; i++) {
+          prevState.unshift(changes[prop][i]);
+        }
 
         return prevState;
       } else if (prop === '$splice') {

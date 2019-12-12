@@ -33,16 +33,23 @@ describe('update', () => {
 
     it('should support push', () => {
       expect(update([1], { $push: [7] })).toEqual([1, 7]);
+      expect(update([1], { $push: [7, 10, 99] })).toEqual([1, 7, 10, 99]);
     });
 
     it('should support unshift', () => {
       expect(update([1], { $unshift: [7] })).toEqual([7, 1]);
+      expect(update([1], { $unshift: [33, 24, 7] })).toEqual([7, 24, 33, 1]);
     });
 
     it('should support merge', () => {
       expect(update({ a: 'b' }, { $merge: { c: 'd' } })).toEqual({
         a: 'b',
         c: 'd'
+      });
+      expect(update({ a: 'b' }, { $merge: { c: 'd', z: 'zero' } })).toEqual({
+        a: 'b',
+        c: 'd',
+        z: 'zero'
       });
     });
 
@@ -54,6 +61,13 @@ describe('update', () => {
           }
         })
       ).toBe(4);
+      expect(
+        update(6, {
+          $apply: function(x) {
+            return x / 2;
+          }
+        })
+      ).toBe(3);
     });
 
     it('should support deep updates', () => {
@@ -67,6 +81,16 @@ describe('update', () => {
 
     it('should support splice', () => {
       expect(update([1, 4, 3], { $splice: [[1, 1, 2]] })).toEqual([1, 2, 3]);
+      expect(update([1, 4, 3, 10], { $splice: [[2, 1, 99]] })).toEqual([
+        1,
+        4,
+        99,
+        10
+      ]);
+    });
+
+    it('should support nothing', () => {
+      expect(update({ a: 'b' }, undefined)).toEqual({ a: 'b' });
     });
   });
 });
