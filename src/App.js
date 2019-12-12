@@ -6,6 +6,9 @@ module.exports = function update(prevState, changes) {
       if (prop === '$push') {
         prevState.push(changes[prop][0]);
         return prevState;
+      } else if (prop === '$unshift') {
+        prevState.unshift(changes[prop][0]);
+        return prevState;
       }
     }
   }
