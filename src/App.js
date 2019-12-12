@@ -1,6 +1,15 @@
 module.exports = function update(prevState, changes) {
   const result = getChangesState(changes);
 
+  if (Array.isArray(prevState)) {
+    for (const prop in changes) {
+      if (prop === '$push') {
+        prevState.push(changes[prop][0]);
+        return prevState;
+      }
+    }
+  }
+
   function setNextState(keys, changesValue) {
     const obj = {};
     const temp = keys.pop();
