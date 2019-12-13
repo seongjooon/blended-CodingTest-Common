@@ -4,7 +4,7 @@
 
 ```
 git clone https://github.com/MrKamake/blended-CodingTest-Common.git
-cd CodingTest-Common
+cd blended-CodingTest-Common
 npm install
 npm test
 ```
